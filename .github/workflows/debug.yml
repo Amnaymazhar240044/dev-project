@@ -1,0 +1,25 @@
+name: Debug Secrets
+on: [workflow_dispatch]
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show Secrets Info
+        run: |
+          echo "=== SECRET CHECK ==="
+          echo "DOCKER_USERNAME value: '${{ secrets.DOCKER_USERNAME }}'"
+          echo "DOCKER_PASSWORD value: '${{ secrets.DOCKER_PASSWORD }}'"
+          echo "===================="
+          
+          if [ -n "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "✅ DOCKER_USERNAME is SET"
+          else
+            echo "❌ DOCKER_USERNAME is EMPTY or NOT SET"
+          fi
+          
+          if [ -n "${{ secrets.DOCKER_PASSWORD }}" ]; then
+            echo "✅ DOCKER_PASSWORD is SET"
+          else
+            echo "❌ DOCKER_PASSWORD is EMPTY or NOT SET"
+          fi
