@@ -1,0 +1,41 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t dev-project-image .
+
+      - name: Push Docker image to DockerHub
+        run: |
+          docker tag dev-project-image ${{ secrets.DOCKERHUB_USERNAME }}/dev-project-image:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/dev-project-image:latest
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1   # change if needed
+
+      - name: Deploy to AWS ECS (or EC2)
+        run: |
+          # Example ECS deploy command (you need to adapt to your setup)
+          echo "Here you would deploy your Docker image to AWS"
